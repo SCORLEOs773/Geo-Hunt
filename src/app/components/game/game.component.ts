@@ -31,6 +31,7 @@ interface CountryAPIResponse {
   styleUrls: ['./game.component.css'],
 })
 export class GameComponent implements AfterViewInit {
+  gameState: 'start' | 'playing' | 'gameover' = 'start';
   private map: any;
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
@@ -50,6 +51,11 @@ export class GameComponent implements AfterViewInit {
   timer: any;
   timeLeft: number = 10;
   showTimer: boolean = false;
+  roundsPlayed: number = 0;
+  maxRounds: number = 10;
+  correctAnswers: number = 0;
+  startTime!: number;
+  fastestTime: number = Infinity;
 
   ngAfterViewInit(): void {
     this.loadCountries();
@@ -67,6 +73,24 @@ export class GameComponent implements AfterViewInit {
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; OpenStreetMap contributors',
     }).addTo(this.map);
+  }
+
+  startGame(): void {
+    this.gameState = 'playing';
+    this.score = 0;
+    this.roundsPlayed = 0;
+    this.correctAnswers = 0;
+    this.fastestTime = Infinity;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.initMap();
+      this.startGameRound();
+    });
+  }
+
+  endGame(): void {
+    clearInterval(this.timer);
+    this.gameState = 'gameover';
   }
 
   loadCountries(): void {
@@ -137,10 +161,21 @@ export class GameComponent implements AfterViewInit {
   }
 
   startGameRound(): void {
+    if (this.roundsPlayed >= this.maxRounds) {
+      this.endGame();
+      return;
+    }
+
+    this.roundsPlayed++;
     this.answerSelected = false;
     this.timeLeft = 10;
     this.showTimer = true;
 
+    this.answerSelected = false;
+    this.timeLeft = 10;
+    this.showTimer = true;
+
+    this.startTime = Date.now();
     this.startTimer();
 
     const index = Math.floor(Math.random() * this.countries.length);
@@ -197,9 +232,15 @@ export class GameComponent implements AfterViewInit {
     if (this.answerSelected) return;
     this.answerSelected = true;
 
+    const timeTaken = Date.now() - this.startTime;
+    if (timeTaken < this.fastestTime) {
+      this.fastestTime = timeTaken;
+    }
+
     if (selected === this.currentCountry.name) {
       clearInterval(this.timer);
       this.score += 10;
+      this.correctAnswers++;
       this.feedbackMessage = '🎉 Correct!';
       this.triggerCelebration();
       this.feedbackColor = 'green';

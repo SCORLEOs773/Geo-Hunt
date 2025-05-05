@@ -1,31 +1,59 @@
 <app-header [score]="score"></app-header>
 
-<div *ngIf="showTimer" class="timer-bar">
-  <div class="progress" [style.width.%]="(timeLeft / 10) * 100"></div>
+<!-- START SCREEN -->
+<div *ngIf="gameState === 'start'" class="screen start-screen">
+  <h1>🌍 Guess the Country!</h1>
+  <p>
+    Guess 10 countries based on their map location. Try to be fast and accurate!
+  </p>
+  <button class="btn primary" (click)="startGame()">Start Game</button>
 </div>
 
-<div *ngIf="isLoading">🌍 Loading countries...</div>
-
-<div *ngIf="!isLoading">
-  <div id="map" style="height: 500px"></div>
-  <div class="options">
-    <p>Where is this location?</p>
-    <button
-      *ngFor="let option of options"
-      (click)="checkAnswer(option)"
-      [disabled]="answerSelected"
-    >
-      {{ option }}
-    </button>
+<!-- GAME OVER SCREEN -->
+<div *ngIf="gameState === 'gameover'" class="screen game-over-screen">
+  <h2>🎉 Game Over!</h2>
+  <p>Score: <strong>{{ score }}</strong></p>
+  <p>Correct Answers: {{ correctAnswers }} / {{ maxRounds }}</p>
+  <p>Accuracy: {{ (correctAnswers / maxRounds) * 100 | number : "1.0-0" }}%</p>
+  <p>Fastest Answer: {{ fastestTime / 1000 | number : "1.2-2" }} seconds</p>
+  <div class="btn-group">
+    <button class="btn primary" (click)="startGame()">Retry</button>
+    <button class="btn secondary" (click)="gameState = 'start'">Go to Home</button>
   </div>
 </div>
 
-<div *ngIf="showFeedback" class="feedback" [style.color]="feedbackColor">
-  {{ feedbackMessage }}
-</div>
+<!-- GAME SCREEN -->
+<div *ngIf="gameState === 'playing'">
+  <div *ngIf="showTimer" class="timer-bar">
+    <div class="progress" [style.width.%]="(timeLeft / 10) * 100"></div>
+  </div>
 
-<app-result
-  *ngIf="showResult"
-  [message]="resultMessage"
-  [correct]="lastWasCorrect"
-></app-result>
+  <div *ngIf="isLoading">🌍 Loading countries...</div>
+
+  <div *ngIf="!isLoading">
+    <div id="map" style="height: 500px"></div>
+    <div class="options">
+      <p>Where is this location?</p>
+      <button
+        *ngFor="let option of options"
+        (click)="checkAnswer(option)"
+        [disabled]="answerSelected"
+      >
+        {{ option }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="showFeedback" class="feedback" [style.color]="feedbackColor">
+    {{ feedbackMessage }}
+  </div>
+
+  <button (click)="startGame()">Retry</button>
+  <button (click)="gameState = 'start'">Home</button>
+
+  <app-result
+    *ngIf="showResult"
+    [message]="resultMessage"
+    [correct]="lastWasCorrect"
+  ></app-result>
+</div>
