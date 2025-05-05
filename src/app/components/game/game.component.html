@@ -1,5 +1,9 @@
 <app-header [score]="score"></app-header>
 
+<div *ngIf="showTimer" class="timer-bar">
+  <div class="progress" [style.width.%]="(timeLeft / 10) * 100"></div>
+</div>
+
 <div *ngIf="isLoading">🌍 Loading countries...</div>
 
 <div *ngIf="!isLoading">

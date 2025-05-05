@@ -49,3 +49,17 @@ button {
   z-index: 999;
   text-align: center;
 }
+
+.timer-bar {
+  height: 10px;
+  width: 100%;
+  background-color: #eee;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 1s linear;
+}

@@ -47,6 +47,9 @@ export class GameComponent implements AfterViewInit {
   feedbackMessage: string = '';
   showFeedback: boolean = false;
   feedbackColor: string = '';
+  timer: any;
+  timeLeft: number = 10;
+  showTimer: boolean = false;
 
   ngAfterViewInit(): void {
     this.loadCountries();
@@ -107,7 +110,39 @@ export class GameComponent implements AfterViewInit {
     return array;
   }
 
+  startTimer(): void {
+    clearInterval(this.timer);
+
+    this.timer = setInterval(() => {
+      this.timeLeft--;
+
+      if (this.timeLeft <= 0) {
+        clearInterval(this.timer);
+        this.handleTimeout();
+      }
+    }, 1000);
+  }
+
+  handleTimeout(): void {
+    this.answerSelected = true;
+    this.feedbackMessage = `⏱️ Time's up! Correct: ${this.currentCountry.name}`;
+    this.feedbackColor = 'red';
+    this.showFeedback = true;
+
+    setTimeout(() => {
+      this.feedbackMessage = '';
+      this.showFeedback = false;
+      this.startGameRound();
+    }, 2000);
+  }
+
   startGameRound(): void {
+    this.answerSelected = false;
+    this.timeLeft = 10;
+    this.showTimer = true;
+
+    this.startTimer();
+
     const index = Math.floor(Math.random() * this.countries.length);
     this.currentCountry = this.countries[index];
 
@@ -163,6 +198,7 @@ export class GameComponent implements AfterViewInit {
     this.answerSelected = true;
 
     if (selected === this.currentCountry.name) {
+      clearInterval(this.timer);
       this.score += 10;
       this.feedbackMessage = '🎉 Correct!';
       this.triggerCelebration();
