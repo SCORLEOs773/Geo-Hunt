@@ -1,0 +1,24 @@
+<app-header [score]="score"></app-header>
+
+<div id="map" style="height: 500px"></div>
+
+<div class="options">
+  <p>Where is this location?</p>
+  <button
+    *ngFor="let option of options"
+    (click)="checkAnswer(option)"
+    [disabled]="buttonsDisabled"
+  >
+    {{ option }}
+  </button>
+</div>
+
+<div *ngIf="showFeedback" class="feedback" [style.color]="feedbackColor">
+  {{ feedbackMessage }}
+</div>
+
+<app-result
+  *ngIf="showResult"
+  [message]="resultMessage"
+  [correct]="lastWasCorrect"
+></app-result>

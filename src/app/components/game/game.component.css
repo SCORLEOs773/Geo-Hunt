@@ -1,0 +1,51 @@
+#map {
+  height: 100vh;
+  width: 100%;
+}
+
+.options {
+  padding: 1rem;
+  text-align: center;
+}
+
+button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 18px;
+}
+
+.result {
+  font-size: 1.4rem;
+  margin-top: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.correct {
+  background-color: #d1ffd6;
+  color: #2e7d32;
+  box-shadow: 0 0 10px rgba(46, 125, 50, 0.3);
+}
+
+.wrong {
+  background-color: #ffd1d1;
+  color: #c62828;
+  box-shadow: 0 0 10px rgba(198, 40, 40, 0.3);
+}
+
+.feedback {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  text-align: center;
+}

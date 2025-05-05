@@ -1,0 +1,15 @@
+.result {
+  font-size: 1.2rem;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+.correct {
+  background-color: #d4edda;
+  color: #155724;
+}
+.wrong {
+  background-color: #f8d7da;
+  color: #721c24;
+}
