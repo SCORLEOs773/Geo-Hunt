@@ -1,16 +1,19 @@
 <app-header [score]="score"></app-header>
 
-<div id="map" style="height: 500px"></div>
+<div *ngIf="isLoading">🌍 Loading countries...</div>
 
-<div class="options">
-  <p>Where is this location?</p>
-  <button
-    *ngFor="let option of options"
-    (click)="checkAnswer(option)"
-    [disabled]="buttonsDisabled"
-  >
-    {{ option }}
-  </button>
+<div *ngIf="!isLoading">
+  <div id="map" style="height: 500px"></div>
+  <div class="options">
+    <p>Where is this location?</p>
+    <button
+      *ngFor="let option of options"
+      (click)="checkAnswer(option)"
+      [disabled]="answerSelected"
+    >
+      {{ option }}
+    </button>
+  </div>
 </div>
 
 <div *ngIf="showFeedback" class="feedback" [style.color]="feedbackColor">

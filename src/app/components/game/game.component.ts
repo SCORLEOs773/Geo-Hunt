@@ -1,14 +1,26 @@
 import * as L from 'leaflet';
-import { Component, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  inject,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { ResultComponent } from '../result/result.component';
 import confetti from 'canvas-confetti';
+import { HttpClient } from '@angular/common/http';
 
 interface Country {
   name: string;
   lat: number;
   lng: number;
+}
+
+interface CountryAPIResponse {
+  name: { common: string };
+  latlng: [number, number];
+  flags: { png: string };
 }
 
 @Component({
@@ -20,16 +32,14 @@ interface Country {
 })
 export class GameComponent implements AfterViewInit {
   private map: any;
-  countries: Country[] = [
-    { name: 'India', lat: 20.5937, lng: 78.9629 },
-    { name: 'USA', lat: 37.0902, lng: -95.7129 },
-    { name: 'Brazil', lat: -14.235, lng: -51.9253 },
-    { name: 'Japan', lat: 36.2048, lng: 138.2529 },
-    { name: 'Australia', lat: -25.2744, lng: 133.7751 },
-  ];
+  private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
+  countries: Country[] = [];
   currentCountry!: Country;
   options: string[] = [];
   score: number = 0;
+  isLoading: boolean = true;
+  answerSelected: boolean = false;
   showResult = false;
   resultMessage = '';
   lastWasCorrect = true;
@@ -39,19 +49,54 @@ export class GameComponent implements AfterViewInit {
   feedbackColor: string = '';
 
   ngAfterViewInit(): void {
-    this.initMap();
-    this.startGameRound();
+    this.loadCountries();
   }
 
   private initMap(): void {
+    const initialZoom = 8;
     this.map = L.map('map', {
-      center: [20, 0], // World center
-      zoom: 2,
+      center: [20, 0],
+      zoom: initialZoom,
+      minZoom: initialZoom,
+      maxZoom: 12,
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; OpenStreetMap contributors',
     }).addTo(this.map);
+  }
+
+  loadCountries(): void {
+    this.isLoading = true;
+    this.http
+      .get<CountryAPIResponse[]>('https://restcountries.com/v3.1/all')
+      .subscribe(
+        (data) => {
+          this.countries = data
+            .filter((c) => c.latlng && c.latlng.length === 2)
+            .map((c) => ({
+              name: c.name.common,
+              lat: c.latlng[0],
+              lng: c.latlng[1],
+            }));
+
+          this.isLoading = false;
+
+          // Let Angular render the map div before initializing the map
+          setTimeout(() => {
+            this.initMap();
+            this.startGameRound();
+          });
+        },
+        (error) => {
+          console.error('Error loading countries:', error);
+          this.isLoading = false;
+          this.feedbackMessage =
+            '❌ Failed to load countries. Please try again.';
+          this.feedbackColor = 'red';
+          this.showFeedback = true;
+        }
+      );
   }
 
   shuffle(array: any[]): any[] {
@@ -66,7 +111,6 @@ export class GameComponent implements AfterViewInit {
     const index = Math.floor(Math.random() * this.countries.length);
     this.currentCountry = this.countries[index];
 
-    // Generate options
     const wrongOptions = this.countries
       .filter((c) => c.name !== this.currentCountry.name)
       .sort(() => 0.5 - Math.random())
@@ -75,8 +119,28 @@ export class GameComponent implements AfterViewInit {
 
     this.options = this.shuffle([this.currentCountry.name, ...wrongOptions]);
 
-    // Zoom map
-    this.map.setView([this.currentCountry.lat, this.currentCountry.lng], 5);
+    // Zoom to selected country
+    this.map.setView([this.currentCountry.lat, this.currentCountry.lng], 10);
+
+    // ⛔ Remove existing circles (avoid stacking overlays)
+    this.map.eachLayer((layer: any) => {
+      if (layer instanceof L.Circle) {
+        this.map.removeLayer(layer);
+      }
+    });
+
+    L.marker([this.currentCountry.lat, this.currentCountry.lng]).addTo(
+      this.map
+    );
+
+    // // ✅ Add white overlay to hide country label
+    // L.circle([this.currentCountry.lat, this.currentCountry.lng], {
+    //   radius: 100000,
+    //   color: 'white',
+    //   fillColor: 'white',
+    //   fillOpacity: 0.7,
+    //   stroke: false,
+    // }).addTo(this.map);
   }
 
   triggerCelebration(): void {
@@ -95,25 +159,29 @@ export class GameComponent implements AfterViewInit {
   }
 
   checkAnswer(selected: string): void {
-    if (this.buttonsDisabled) return;
-
-    this.buttonsDisabled = true;
+    if (this.answerSelected) return;
+    this.answerSelected = true;
 
     if (selected === this.currentCountry.name) {
       this.score += 10;
       this.feedbackMessage = '🎉 Correct!';
-      this.feedbackColor = 'green';
       this.triggerCelebration();
+      this.feedbackColor = 'green';
+      this.lastWasCorrect = true;
     } else {
-      this.feedbackMessage = `❌ Wrong! It was ${this.currentCountry.name}`;
+      this.feedbackMessage = `❌ Wrong! Correct: ${this.currentCountry.name}`;
       this.feedbackColor = 'red';
+      this.lastWasCorrect = false;
     }
 
     this.showFeedback = true;
+    this.cdr.detectChanges();
 
     setTimeout(() => {
       this.showFeedback = false;
-      this.buttonsDisabled = false;
+      this.answerSelected = false;
+      this.feedbackMessage = '';
+      this.cdr.detectChanges();
       this.startGameRound();
     }, 2000);
   }
