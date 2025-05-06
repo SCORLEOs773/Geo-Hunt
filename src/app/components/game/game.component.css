@@ -136,3 +136,73 @@ button {
     transform: scale(1);
   }
 }
+
+.timer-bar {
+  height: 10px;
+  background-color: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.progress {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 1s linear;
+}
+
+/* Style for the difficulty selector dropdown */
+select {
+  padding: 0.8rem 1.2rem;
+  font-size: 1.2rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  width: 100%;
+  max-width: 200px;
+  margin: 20px 0;
+  transition: border-color 0.3s ease;
+}
+
+select:hover {
+  border-color: #4caf50;
+}
+
+select:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+/* Style for options in the select dropdown */
+option {
+  padding: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Button Styling */
+.btn.primary {
+  font-size: 1.2rem;
+  padding: 0.8rem 2rem;
+  border-radius: 10px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.btn.primary:hover {
+  background-color: #45a049;
+}
+
+/* Text Styling */
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.screen p {
+  font-size: 1.2rem;
+  color: #fff;
+}

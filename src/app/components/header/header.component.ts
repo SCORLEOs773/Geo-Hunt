@@ -10,4 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class HeaderComponent {
   @Input() score: number = 0;
+  @Input() lives: number = 0;
+  @Input() streak: number = 0;
+  @Input() difficulty: 'easy' | 'medium' | 'hard' | 'survival' = 'easy';
 }

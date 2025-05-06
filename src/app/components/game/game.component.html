@@ -1,4 +1,9 @@
-<app-header [score]="score"></app-header>
+<app-header
+  [score]="score"
+  [difficulty]="difficulty"
+  [lives]="lives"
+  [streak]="streak"
+></app-header>
 
 <!-- START SCREEN -->
 <div *ngIf="gameState === 'start'" class="screen start-screen">
@@ -6,26 +11,40 @@
   <p>
     Guess 10 countries based on their map location. Try to be fast and accurate!
   </p>
+  <h2>Select Difficulty</h2>
+  <select [(ngModel)]="difficulty">
+    <option value="easy">🟢 Easy</option>
+    <option value="medium">🟡 Medium</option>
+    <option value="hard">🔴 Hard</option>
+    <option value="survival">🟣 Survival</option>
+  </select>
   <button class="btn primary" (click)="startGame()">Start Game</button>
 </div>
 
 <!-- GAME OVER SCREEN -->
 <div *ngIf="gameState === 'gameover'" class="screen game-over-screen">
   <h2>🎉 Game Over!</h2>
-  <p>Score: <strong>{{ score }}</strong></p>
-  <p>Correct Answers: {{ correctAnswers }} / {{ maxRounds }}</p>
-  <p>Accuracy: {{ (correctAnswers / maxRounds) * 100 | number : "1.0-0" }}%</p>
+  <p>
+    Score: <strong>{{ score }}</strong>
+  </p>
+  <p *ngIf="difficulty !== 'survival'">Correct Answers: {{ correctAnswers }} / {{ maxRounds }}</p>
+  <p *ngIf="difficulty !== 'survival'">Accuracy: {{ (correctAnswers / maxRounds) * 100 | number : "1.0-0" }}%</p>
   <p>Fastest Answer: {{ fastestTime / 1000 | number : "1.2-2" }} seconds</p>
+  <p *ngIf="difficulty === 'survival'">Best Streak: {{ bestStreak }}</p>
   <div class="btn-group">
     <button class="btn primary" (click)="startGame()">Retry</button>
-    <button class="btn secondary" (click)="gameState = 'start'">Go to Home</button>
+    <button class="btn secondary" (click)="gameState = 'start'">
+      Go to Home
+    </button>
   </div>
 </div>
 
 <!-- GAME SCREEN -->
 <div *ngIf="gameState === 'playing'">
   <div *ngIf="showTimer" class="timer-bar">
-    <div class="progress" [style.width.%]="(timeLeft / 10) * 100"></div>
+    <!-- <div class="progress" [style.width.%]="(timeLeft / 10) * 100"></div> -->
+    <div class="progress" *ngIf="difficulty !== 'survival'" [style.width.%]="(timeLeft / maxTime) * 100"></div>
+    <div class="progress" *ngIf="difficulty === 'survival'" [style.width.%]="(timeLeft / 15) * 100"></div>
   </div>
 
   <div *ngIf="isLoading">🌍 Loading countries...</div>

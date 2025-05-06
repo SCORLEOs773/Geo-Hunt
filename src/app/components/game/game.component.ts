@@ -10,6 +10,7 @@ import { HeaderComponent } from '../header/header.component';
 import { ResultComponent } from '../result/result.component';
 import confetti from 'canvas-confetti';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 interface Country {
   name: string;
@@ -26,12 +27,19 @@ interface CountryAPIResponse {
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, ResultComponent],
+  imports: [CommonModule, HeaderComponent, ResultComponent, FormsModule],
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css'],
 })
 export class GameComponent implements AfterViewInit {
   gameState: 'start' | 'playing' | 'gameover' = 'start';
+  difficulty: 'easy' | 'medium' | 'hard' | 'survival' = 'medium';
+  difficultySettings = {
+    easy: { time: 20 },
+    medium: { time: 15 },
+    hard: { time: 10 },
+    survival: { time: 15 },
+  };
   private map: any;
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
@@ -39,6 +47,9 @@ export class GameComponent implements AfterViewInit {
   currentCountry!: Country;
   options: string[] = [];
   score: number = 0;
+  lives: number = 3;
+  streak: number = 0;
+  bestStreak: number = 0;
   isLoading: boolean = true;
   answerSelected: boolean = false;
   showResult = false;
@@ -56,6 +67,7 @@ export class GameComponent implements AfterViewInit {
   correctAnswers: number = 0;
   startTime!: number;
   fastestTime: number = Infinity;
+  maxTime: number = 10;
   correctSound = new Audio('assets/sounds/correct.mp3');
   wrongSound = new Audio('assets/sounds/wrong.mp3');
   levelUpSound = new Audio('assets/sounds/level-up.mp3');
@@ -81,6 +93,9 @@ export class GameComponent implements AfterViewInit {
   startGame(): void {
     this.gameState = 'playing';
     this.score = 0;
+    this.lives = 3; // Reset lives
+    this.streak = 0; // Reset streak
+    // this.timeLeft = 15; // 15 seconds timer for Survival mode
     this.roundsPlayed = 0;
     this.correctAnswers = 0;
     this.fastestTime = Infinity;
@@ -156,6 +171,13 @@ export class GameComponent implements AfterViewInit {
     this.feedbackMessage = `⏱️ Time's up! Correct: ${this.currentCountry.name}`;
     this.feedbackColor = 'red';
     this.showFeedback = true;
+    if (this.difficulty === 'survival') {
+      this.lives -= 1;
+      this.streak = 0;
+      if (this.lives === 0) {
+        this.endGame();
+      }
+    }
 
     setTimeout(() => {
       this.feedbackMessage = '';
@@ -172,11 +194,9 @@ export class GameComponent implements AfterViewInit {
 
     this.roundsPlayed++;
     this.answerSelected = false;
-    this.timeLeft = 10;
-    this.showTimer = true;
-
-    this.answerSelected = false;
-    this.timeLeft = 10;
+    const settings = this.difficultySettings[this.difficulty];
+    this.maxTime = settings.time;
+    this.timeLeft = this.maxTime;
     this.showTimer = true;
 
     this.startTime = Date.now();
@@ -250,11 +270,24 @@ export class GameComponent implements AfterViewInit {
       this.feedbackColor = 'green';
       this.lastWasCorrect = true;
       this.playSound('correct');
+      if ((this.difficulty = 'survival')) {
+        this.streak += 1;
+        this.streak > this.bestStreak
+          ? (this.bestStreak = this.streak)
+          : this.bestStreak;
+      }
     } else {
       this.feedbackMessage = `❌ Wrong! Correct: ${this.currentCountry.name}`;
       this.feedbackColor = 'red';
       this.lastWasCorrect = false;
       this.playSound('wrong');
+      if (this.difficulty === 'survival') {
+        this.lives -= 1;
+        this.streak = 0;
+        if (this.lives === 0) {
+          this.endGame();
+        }
+      }
     }
 
     this.showFeedback = true;

@@ -1,4 +1,7 @@
 <header class="header">
   <h1>🌍 GeoHunt</h1>
   <p>Score: {{ score }}</p>
+  <p>Difficulty: {{ difficulty | titlecase }}</p>
+  <p *ngIf="difficulty === 'survival'">Lives: {{ lives }}</p>
+  <p *ngIf="difficulty === 'survival'">Streak: {{ streak }}</p>
 </header>
