@@ -56,6 +56,9 @@ export class GameComponent implements AfterViewInit {
   correctAnswers: number = 0;
   startTime!: number;
   fastestTime: number = Infinity;
+  correctSound = new Audio('assets/sounds/correct.mp3');
+  wrongSound = new Audio('assets/sounds/wrong.mp3');
+  levelUpSound = new Audio('assets/sounds/level-up.mp3');
 
   ngAfterViewInit(): void {
     this.loadCountries();
@@ -91,6 +94,7 @@ export class GameComponent implements AfterViewInit {
   endGame(): void {
     clearInterval(this.timer);
     this.gameState = 'gameover';
+    this.playSound('levelup');
   }
 
   loadCountries(): void {
@@ -245,10 +249,12 @@ export class GameComponent implements AfterViewInit {
       this.triggerCelebration();
       this.feedbackColor = 'green';
       this.lastWasCorrect = true;
+      this.playSound('correct');
     } else {
       this.feedbackMessage = `❌ Wrong! Correct: ${this.currentCountry.name}`;
       this.feedbackColor = 'red';
       this.lastWasCorrect = false;
+      this.playSound('wrong');
     }
 
     this.showFeedback = true;
@@ -261,5 +267,16 @@ export class GameComponent implements AfterViewInit {
       this.cdr.detectChanges();
       this.startGameRound();
     }, 2000);
+  }
+
+  playSound(type: 'correct' | 'wrong' | 'levelup') {
+    const sounds = {
+      correct: this.correctSound,
+      wrong: this.wrongSound,
+      levelup: this.levelUpSound,
+    };
+
+    sounds[type].currentTime = 0; // reset if already playing
+    sounds[type].play();
   }
 }
