@@ -108,6 +108,7 @@ export class GameComponent implements AfterViewInit {
 
   endGame(): void {
     clearInterval(this.timer);
+    this.timer = null;
     this.gameState = 'gameover';
     this.playSound('levelup');
   }
@@ -167,6 +168,8 @@ export class GameComponent implements AfterViewInit {
   }
 
   handleTimeout(): void {
+    if (this.gameState !== 'playing') return;
+
     this.answerSelected = true;
     this.feedbackMessage = `⏱️ Time's up! Correct: ${this.currentCountry.name}`;
     this.feedbackColor = 'red';
@@ -176,10 +179,12 @@ export class GameComponent implements AfterViewInit {
       this.streak = 0;
       if (this.lives === 0) {
         this.endGame();
+        return;
       }
     }
 
     setTimeout(() => {
+      if (this.gameState !== 'playing') return;
       this.feedbackMessage = '';
       this.showFeedback = false;
       this.startGameRound();
