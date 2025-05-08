@@ -35,10 +35,9 @@ GeoHunt is an interactive geography-based quiz game where players guess countrie
 - **Angular** – Frontend framework
 - **TypeScript** – Strong typing and structure
 - **HTML5 / SCSS** – Markup and responsive styling
-- **Leaflet.js** – Interactive map rendering (or OpenStreetMap if used)
-- **RxJS** – Reactive programming (if used)
-- **Firebase** – Hosting/auth (optional)
-- **Responsive Design** – Mobile and desktop friendly
+- **Leaflet.js** – Interactive map rendering
+- **RxJS** – Reactive programming
+- **REST-API** - Use of REST APIs for Country Details
 
 ---
 
