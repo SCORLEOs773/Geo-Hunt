@@ -1,7 +1,11 @@
 <header class="header">
-  <h1>🌍 GeoHunt</h1>
-  <p>Score: {{ score }}</p>
-  <p>Difficulty: {{ difficulty | titlecase }}</p>
-  <p *ngIf="difficulty === 'survival'">Lives: {{ lives }}</p>
-  <p *ngIf="difficulty === 'survival'">Streak: {{ streak }}</p>
+  <div class="header-inner">
+    <h1 class="game-title">🌍 GeoHunt</h1>
+    <div class="stats">
+      <span>Score: {{ score }}</span>
+      <span>Difficulty: {{ difficulty | titlecase }}</span>
+      <span *ngIf="difficulty === 'survival'">Lives: {{ lives }}</span>
+      <span *ngIf="difficulty === 'survival'">Streak: {{ streak }}</span>
+    </div>
+  </div>
 </header>

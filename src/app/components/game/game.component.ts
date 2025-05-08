@@ -262,11 +262,13 @@ export class GameComponent implements AfterViewInit {
     this.answerSelected = true;
 
     const timeTaken = Date.now() - this.startTime;
-    if (timeTaken < this.fastestTime) {
-      this.fastestTime = timeTaken;
-    }
 
     if (selected === this.currentCountry.name) {
+      // Only update fastestTime if the answer is correct
+      if (timeTaken < this.fastestTime) {
+        this.fastestTime = timeTaken;
+      }
+
       clearInterval(this.timer);
       this.score += 10;
       this.correctAnswers++;
@@ -275,17 +277,19 @@ export class GameComponent implements AfterViewInit {
       this.feedbackColor = 'green';
       this.lastWasCorrect = true;
       this.playSound('correct');
-      if ((this.difficulty = 'survival')) {
+
+      if (this.difficulty === 'survival') {
         this.streak += 1;
-        this.streak > this.bestStreak
-          ? (this.bestStreak = this.streak)
-          : this.bestStreak;
+        if (this.streak > this.bestStreak) {
+          this.bestStreak = this.streak;
+        }
       }
     } else {
       this.feedbackMessage = `❌ Wrong! Correct: ${this.currentCountry.name}`;
       this.feedbackColor = 'red';
       this.lastWasCorrect = false;
       this.playSound('wrong');
+
       if (this.difficulty === 'survival') {
         this.lives -= 1;
         this.streak = 0;

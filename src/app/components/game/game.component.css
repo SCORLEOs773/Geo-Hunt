@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
 #map {
   height: 100vh;
   width: 100%;
@@ -75,6 +81,7 @@ button {
   color: #fff;
   text-align: center;
   padding: 2rem;
+  margin-top: -8rem;
 }
 
 .start-screen h1,
@@ -86,6 +93,24 @@ button {
 .screen p {
   font-size: 1.2rem;
   margin: 0.5rem 0;
+}
+
+.game-title {
+  font-size: 3rem;
+  color: #00ffe7;
+  text-shadow: 0 0 10px #00ffe7, 0 0 20px #00897b;
+  margin: 0;
+}
+
+.intro-box {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  max-width: 500px;
+  text-align: center;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 /* Buttons */
@@ -174,9 +199,43 @@ select:focus {
 }
 
 /* Style for options in the select dropdown */
-option {
+.options {
+  padding: 2rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.options button {
+  background-color: #1b263b;
+  color: #fff;
+  border: 2px solid transparent;
   padding: 1rem;
   font-size: 1.1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.options button:hover {
+  background-color: #2b3a59;
+  transform: scale(1.03);
+  border-color: #4caf50;
+}
+
+.options p {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  background-color: #f0f4f8;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
 /* Button Styling */
@@ -205,4 +264,33 @@ h2 {
 .screen p {
   font-size: 1.2rem;
   color: #fff;
+}
+
+.home-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #f44336;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.home-btn:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+
+.credit-text {
+  margin-top: 3rem;
+  font-size: 1.2rem;
+  color: #bbbbbb;
+  opacity: 0.7;
+  font-style: italic;
 }

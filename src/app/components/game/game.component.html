@@ -7,28 +7,45 @@
 
 <!-- START SCREEN -->
 <div *ngIf="gameState === 'start'" class="screen start-screen">
-  <h1>🌍 Guess the Country!</h1>
-  <p>
-    Guess 10 countries based on their map location. Try to be fast and accurate!
-  </p>
-  <h2>Select Difficulty</h2>
-  <select [(ngModel)]="difficulty">
-    <option value="easy">🟢 Easy</option>
-    <option value="medium">🟡 Medium</option>
-    <option value="hard">🔴 Hard</option>
-    <option value="survival">🟣 Survival</option>
-  </select>
-  <button class="btn primary" (click)="startGame()">Start Game</button>
+  <div class="title-box">
+    <h1 class="game-title">🌍 Guess the Country!</h1>
+  </div>
+
+  <div class="intro-box">
+    <p>
+      Guess 10 countries based on their map location.<br />
+      Try to be fast and accurate!
+    </p>
+  </div>
+
+  <div class="difficulty-box">
+    <h2>Select Difficulty</h2>
+    <select [(ngModel)]="difficulty" class="difficulty-select">
+      <option value="easy">🟢 Easy</option>
+      <option value="medium">🟡 Medium</option>
+      <option value="hard">🔴 Hard</option>
+      <option value="survival">🟣 Survival</option>
+    </select>
+  </div>
+
+  <button class="btn primary start-btn" (click)="startGame()">
+    Start Game
+  </button>
+  <small class="credit-text">Designed by Sukhad Sharma</small>
 </div>
 
 <!-- GAME OVER SCREEN -->
 <div *ngIf="gameState === 'gameover'" class="screen game-over-screen">
-  <h2>🎉 Game Over!</h2>
+  <h2>Game Over!</h2>
   <p>
     Score: <strong>{{ score }}</strong>
   </p>
-  <p *ngIf="difficulty !== 'survival'">Correct Answers: {{ correctAnswers }} / {{ maxRounds }}</p>
-  <p *ngIf="difficulty !== 'survival'">Accuracy: {{ (correctAnswers / maxRounds) * 100 | number : "1.0-0" }}%</p>
+  <p *ngIf="difficulty !== 'survival'">
+    Correct Answers: {{ correctAnswers }} / {{ maxRounds }}
+  </p>
+  <p *ngIf="difficulty !== 'survival'">
+    Accuracy: {{ (correctAnswers / maxRounds) * 100 | number : "1.0-0" }}%
+  </p>
   <p>Fastest Answer: {{ fastestTime / 1000 | number : "1.2-2" }} seconds</p>
   <p *ngIf="difficulty === 'survival'">Best Streak: {{ bestStreak }}</p>
   <div class="btn-group">
@@ -37,14 +54,23 @@
       Go to Home
     </button>
   </div>
+  <small class="credit-text">Designed by Sukhad Sharma</small>
 </div>
 
 <!-- GAME SCREEN -->
 <div *ngIf="gameState === 'playing'">
   <div *ngIf="showTimer" class="timer-bar">
     <!-- <div class="progress" [style.width.%]="(timeLeft / 10) * 100"></div> -->
-    <div class="progress" *ngIf="difficulty !== 'survival'" [style.width.%]="(timeLeft / maxTime) * 100"></div>
-    <div class="progress" *ngIf="difficulty === 'survival'" [style.width.%]="(timeLeft / 15) * 100"></div>
+    <div
+      class="progress"
+      *ngIf="difficulty !== 'survival'"
+      [style.width.%]="(timeLeft / maxTime) * 100"
+    ></div>
+    <div
+      class="progress"
+      *ngIf="difficulty === 'survival'"
+      [style.width.%]="(timeLeft / 15) * 100"
+    ></div>
   </div>
 
   <div *ngIf="isLoading">🌍 Loading countries...</div>
@@ -67,8 +93,7 @@
     {{ feedbackMessage }}
   </div>
 
-  <button (click)="startGame()">Retry</button>
-  <button (click)="gameState = 'start'">Home</button>
+  <button class="home-btn" (click)="gameState = 'start'">Home</button>
 
   <app-result
     *ngIf="showResult"
