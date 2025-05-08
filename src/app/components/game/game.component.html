@@ -12,9 +12,26 @@
   </div>
 
   <div class="intro-box">
-    <p>
-      Guess 10 countries based on their map location.<br />
-      Try to be fast and accurate!
+    <p *ngIf="difficulty === 'easy'">
+      🟢 Easy Mode: Guess 10 countries by identifying their map location.<br />
+      You’ll have <strong>20 seconds</strong> for each question. Take it slow
+      and steady!
+    </p>
+    <p *ngIf="difficulty === 'medium'">
+      🟡 Medium Mode: Guess 10 countries based on map location.<br />
+      Each guess must be made within <strong>15 seconds</strong>. Stay sharp!
+    </p>
+    <p *ngIf="difficulty === 'hard'">
+      🔴 Hard Mode: Only the quickest can survive!<br />
+      You’ll have just <strong>10 seconds</strong> per guess across 10
+      countries. Think fast!
+    </p>
+    <p *ngIf="difficulty === 'survival'">
+      🟣 Survival Mode: You have <strong>3 lives</strong> and
+      <strong>15 seconds</strong> per guess.<br />
+      Guess as many countries correctly as you can. Build your streak and don’t
+      lose all your lives!<br />
+      Streak resets on incorrect guess, yikes!
     </p>
   </div>
 
